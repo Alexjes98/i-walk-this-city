@@ -1,13 +1,53 @@
 import { createRoot } from "react-dom/client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  ContactShadows,
-  OrbitControls,
-} from "@react-three/drei";
+import { ContactShadows, OrbitControls, SpotLight } from "@react-three/drei";
 import { useRef } from "react";
 import EnvMap from "./EnvMap";
-
+import Building1 from "./Building1";
+import NeonLine from "./components/NeonLine";
 import "./styles.css";
+
+// Light guide component for point lights
+function LightGuide({ position, color, size = 0.5 }) {
+  return (
+    <group position={position}>
+      {/* Sphere to indicate light position */}
+      <mesh>
+        <sphereGeometry args={[size, 8, 8]} />
+        <meshStandardMaterial 
+          color={color} 
+          emissive={color}
+          emissiveIntensity={1}
+          transparent={true}
+          opacity={0.7}
+        />
+      </mesh>
+      
+      {/* Cross to indicate light position */}
+      <group>
+        {/* X axis */}
+        <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
+          <boxGeometry args={[size * 3, size * 0.2, size * 0.2]} />
+          <meshStandardMaterial color={color} emissive={color} />
+        </mesh>
+        {/* Y axis */}
+        <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <boxGeometry args={[size * 3, size * 0.2, size * 0.2]} />
+          <meshStandardMaterial color={color} emissive={color} />
+        </mesh>
+        {/* Z axis */}
+        <mesh position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <boxGeometry args={[size * 3, size * 0.2, size * 0.2]} />
+          <meshStandardMaterial color={color} emissive={color} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+// Neon light component
+
+
 const glassMaterial = {
   transparent: true,
   opacity: 0.5,
@@ -23,134 +63,239 @@ const glassMaterial = {
   specularIntensity: 1,
   specularColor: "#ffffff",
 };
-function Building({
-  position,
-  rotation = [0, 0, 0],
-  width,
-  height,
-  depth,
-  color,
-  isGlass = false,
-}) {
-  const glassMaterial = {
-    transparent: true,
-    opacity: 0.5,
-    color: "#fffffff",
-    metalness: 0.9,
-    roughness: 0.05,
-    transmission: 0.6,
-    reflectivity: 5,
-    clearcoat: 1,
-    clearcoatRoughness: 0.1,
-    envMapIntensity: 2.5,
-    ior: 1.52, // Index of refraction for glass
-    specularIntensity: 1,
-    specularColor: "#ffffff",
-  };
-
-  return (
-    <>
-      <mesh position={position} rotation={rotation}>
-        <boxGeometry args={[width, height, depth]} />
-        {isGlass ? (
-          <meshPhysicalMaterial {...glassMaterial} />
-        ) : (
-          <meshPhongMaterial color={color} />
-        )}
-      </mesh>
-    </>
-  );
-}
-
-function GlassBuilding({
-  position,
-  rotation = [0, 0, 0],
-  width,
-  height,
-  depth,
-}) {
-  return (
-    <Building
-      position={position}
-      rotation={rotation}
-      width={width}
-      height={height}
-      depth={depth}
-      isGlass={true}
-    />
-  );
-}
 
 function CityScene() {
-  // Scene content without auto-rotation
+  const spotLightRef = useRef();
+  const movingLightRef = useRef();
+  
+  useFrame((state, delta) => {
+    // Animate one of the spotlights
+    if (spotLightRef.current) {
+      spotLightRef.current.position.x =
+        Math.sin(state.clock.elapsedTime * 0.5) * 10;
+    }
+    
+    // If we have a moving light ref, update its position to match the spotlight
+    if (movingLightRef.current && spotLightRef.current) {
+      movingLightRef.current.position.x = spotLightRef.current.position.x;
+    }
+  });
 
+  const panelPosition = [3, 0, 15];
+  const panelRotation = [0,-Math.PI/1.2, 0];
+  
   return (
     <>
       {/* Ground */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
-        <planeGeometry args={[30, 30]} />
-        <meshPhongMaterial color="#444444" />
+      <mesh position={[0, -10, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[90, 90]} />
+        <meshPhongMaterial color="#ffffff" />
+      </mesh>
+      <mesh position={panelPosition} rotation={panelRotation}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="white" />
+      </mesh>
+      <rectAreaLight
+          position={panelPosition}
+          rotation={panelRotation}
+          lookAt={[0, 0, 0]}
+          intensity={200}
+          color="purple"
+          width={10}
+          height={4}
+        />
+      {/* Buildings */}
+      <Building1 position={[0, 0, 0]} rotation={[0, 0, 0]} />
+      
+      {/* Add visible guides for lights in Building1 */}
+      
+      <LightGuide position={[-5, 17, 0]} color="white" size={0.5} />
+
+      {/* Cyberpunk Neon Lights */}
+      {/* Horizontal building edge lights */}
+      <NeonLine
+        start={[-23, -10, -8]}
+        end={[-17, -10, -8]}
+        color="#ff00ff"
+        thickness={0.15}
+      />
+      <NeonLine
+        start={[-23, -10, 8]}
+        end={[-17, -10, 8]}
+        color="#ff00ff"
+        thickness={0.15}
+      />
+      <NeonLine
+        start={[-23, 33, -8]}
+        end={[-17, 33, -8]}
+        color="#00ffff"
+        thickness={0.15}
+      />
+      <NeonLine
+        start={[-23, 33, 8]}
+        end={[-17, 33, 8]}
+        color="#00ffff"
+        thickness={0.15}
+      />
+
+      {/* Vertical building edge lights */}
+      <NeonLine
+        start={[-23, -10, -8]}
+        end={[-23, 33, -8]}
+        color="#0077ff"
+        thickness={0.15}
+      />
+      <NeonLine
+        start={[-17, -10, -8]}
+        end={[-17, 33, -8]}
+        color="#0077ff"
+        thickness={0.15}
+      />
+      <NeonLine
+        start={[-23, -10, 8]}
+        end={[-23, 33, 8]}
+        color="#0077ff"
+        thickness={0.15}
+      />
+      <NeonLine
+        start={[-17, -10, 8]}
+        end={[-17, 33, 8]}
+        color="#0077ff"
+        thickness={0.15}
+      />
+
+      {/* Building window outlines */}
+      <NeonLine
+        start={[-17.7, 10, 7.3]}
+        end={[1.5, 12, 8.5]}
+        color="#ff00aa"
+        thickness={0.08}
+      />
+      <NeonLine
+        start={[-21.5, 14, -8.5]}
+        end={[-16.5, 14, -8.5]}
+        color="#ff00aa"
+        thickness={0.08}
+      />
+      <NeonLine
+        start={[-21.5, 15, -8.5]}
+        end={[-16.5, 15, -8.5]}
+        color="#ff00aa"
+        thickness={0.08}
+      />
+      <NeonLine
+        start={[-21.5, 17, -8.5]}
+        end={[-16.5, 17, -8.5]}
+        color="#ff00aa"
+        thickness={0.08}
+      />
+      <NeonLine
+        start={[-21.5, 18, -8.5]}
+        end={[-16.5, 18, -8.5]}
+        color="#ff00aa"
+        thickness={0.08}
+      />
+      <NeonLine
+        start={[-21.5, 20, -8.5]}
+        end={[-16.5, 20, -8.5]}
+        color="#ff00aa"
+        thickness={0.08}
+      />
+
+      {/* Ground grid lines */}
+      {[...Array(5)].map((_, i) => (
+        <NeonLine
+          key={`grid-x-${i}`}
+          start={[-30 + i * 15, -9.95, -30]}
+          end={[-30 + i * 15, -9.95, 30]}
+          color="#8000ff"
+          thickness={0.05}
+        />
+      ))}
+      {[...Array(5)].map((_, i) => (
+        <NeonLine
+          key={`grid-z-${i}`}
+          start={[-30, -9.95, -30 + i * 15]}
+          end={[30, -9.95, -30 + i * 15]}
+          color="#8000ff"
+          thickness={0.05}
+        />
+      ))}
+
+      {/* Diagonal accent lines */}
+      <NeonLine
+        start={[-15, -10, 10]}
+        end={[15, 10, -10]}
+        color="#00ff99"
+        thickness={0.12}
+      />
+      <NeonLine
+        start={[-15, -10, -10]}
+        end={[15, 10, 10]}
+        color="#00ff99"
+        thickness={0.12}
+      />
+
+      {/* Flying neon rings */}
+      <mesh position={[10, 5, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[5, 0.1, 16, 100]} />
+        <meshStandardMaterial
+          color="#ff00ff"
+          emissive="#ff00ff"
+          emissiveIntensity={2}
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh position={[10, 5, 0]} rotation={[Math.PI / 2, Math.PI / 4, 0]}>
+        <torusGeometry args={[4, 0.1, 16, 100]} />
+        <meshStandardMaterial
+          color="#00ffff"
+          emissive="#00ffff"
+          emissiveIntensity={2}
+          toneMapped={false}
+        />
       </mesh>
 
-      {/* Buildings */}
-      <Building
-        position={[-2, 1, 0]}
-        rotation={[0, Math.PI / 4, 0]}
-        width={5}
-        height={3}
-        depth={2}
-        color="#000000"
+      {/* Lighting */}      
+      
+      <LightGuide position={[0, 1, 3]} color="white" />
+      
+      {/* Spotlights for dramatic lighting */}
+      <SpotLight 
+        position={[15, 20, 0]} 
+        angle={0.3} 
+        penumbra={0.2} 
+        intensity={20} 
+        color="#ff00ff" 
+        distance={50} 
+        castShadow 
       />
-      <Building
-        position={[4, 1, 0]}
-        rotation={[0, -Math.PI / 4, 0]}
-        width={5}
-        height={3}
-        depth={2}
-        color="#000000"
+      <LightGuide position={[15, 20, 0]} color="#ff00ff" />
+      
+      <SpotLight 
+        ref={spotLightRef}
+        position={[-15, 15, 5]} 
+        angle={0.5} 
+        penumbra={0.5} 
+        intensity={15} 
+        color="#00ffff" 
+        distance={30} 
+        castShadow 
       />
-
-      {/* Glass Buildings */}
-      <GlassBuilding
-        position={[-1, 1, 1]}
-        rotation={[0, Math.PI / 4, 0]}
-        width={5}
-        height={1}
-        depth={1}
-      />
-
-      <GlassBuilding
-        position={[4, 1, 1]}
-        rotation={[0, -Math.PI / 4, 0]}
-        width={5}
-        height={1}
-        depth={1}
-      />
-
-      {/* Lighting */}
-      <directionalLight
-        position={[0, 2, 3]}
-        lookAt={[0, 0, 0]}
-        intensity={5}
-        color="purple"
-      />
-      <pointLight
-        position={[2, 1, 2]}
-        intensity={100}
-        distance={10}
-        decay={0.5}
-        color="purple"
-      />
-
-      <mesh position={[1, 2, 1]}>
+      {/* Moving light guide that follows the animated spotlight */}
+      <group ref={movingLightRef} position={[-15, 15, 5]}>
+        <LightGuide position={[0, 0, 0]} color="#00ffff" />
+      </group>
+      
+      <mesh position={[10, 1, 10]}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshPhysicalMaterial {...glassMaterial} />
       </mesh>
-
+      
       {/* Environment map for reflections */}
       <EnvMap />
-
-      
+      {/* Add fog for atmosphere */}
+      <fog attach="fog" args={["#120023", 30, 90]} />
     </>
   );
 }
@@ -158,14 +303,14 @@ function CityScene() {
 function App() {
   return (
     <div id="canvas-container">
-      <Canvas camera={{ position: [0, 8, 15], fov: 45 }}>
+      <Canvas camera={{ position: [0, 8, 25], fov: 45 }} shadows>
         <CityScene />
         <OrbitControls
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
           minDistance={2}
-          maxDistance={25}
+          maxDistance={50}
         />
       </Canvas>
     </div>
