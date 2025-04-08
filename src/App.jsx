@@ -3,7 +3,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, OrbitControls, SpotLight } from "@react-three/drei";
 import { useRef } from "react";
 import EnvMap from "./EnvMap";
-import Building1 from "./Building1";
+import Building1 from "./components/Building1";
+import Avenue from "./components/Avenue";
 import NeonLine from "./components/NeonLine";
 import "./styles.css";
 
@@ -91,22 +92,10 @@ function CityScene() {
         <planeGeometry args={[90, 90]} />
         <meshPhongMaterial color="#ffffff" />
       </mesh>
-      <mesh position={panelPosition} rotation={panelRotation}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-      <rectAreaLight
-          position={panelPosition}
-          rotation={panelRotation}
-          lookAt={[0, 0, 0]}
-          intensity={200}
-          color="purple"
-          width={10}
-          height={4}
-        />
-      {/* Buildings */}
-      <Building1 position={[0, 0, 0]} rotation={[0, 0, 0]} />
       
+      {/* Buildings */}
+      <Building1 position={[-20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
+      <Avenue position={[-5,-10, 0]} rotation={[0, 0, 0]} />
       {/* Add visible guides for lights in Building1 */}
       
       <LightGuide position={[-5, 17, 0]} color="white" size={0.5} />
@@ -125,19 +114,6 @@ function CityScene() {
         color="#ff00ff"
         thickness={0.15}
       />
-      <NeonLine
-        start={[-23, 33, -8]}
-        end={[-17, 33, -8]}
-        color="#00ffff"
-        thickness={0.15}
-      />
-      <NeonLine
-        start={[-23, 33, 8]}
-        end={[-17, 33, 8]}
-        color="#00ffff"
-        thickness={0.15}
-      />
-
       {/* Vertical building edge lights */}
       <NeonLine
         start={[-23, -10, -8]}
