@@ -71,9 +71,27 @@ const Building1 = ({ position = [0, 0, 0], rotation = [0, 0, 0] }) => {
       </mesh>
       <pointLight
         position={[4, 10, 5]}
-        intensity={20}
+        intensity={10}
         decay={0.9}
         color="purple"
+      />
+      <pointLight
+        position={[-6, 5, 4]}
+        intensity={2}
+        decay={0.99}
+        color="red"
+      />
+      <pointLight
+        position={[-6, 25, 4]}
+        intensity={1}
+        decay={0.99}
+        color="#00ccff"
+      />
+      <pointLight
+        position={[-12, 25, -1]}
+        intensity={1}
+        decay={0.99}
+        color="#00ccff"
       />
       <MovingSpot
         position={[position[0] - 15, position[1]+8, position[2] + -7, 25]}
