@@ -1,75 +1,63 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
 
-function Car({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function Car({ 
+  position = [0, 0, 0], 
+  rotation = [0, 0, 0], 
+  speed = 0.3,
+  returnPositionLeft = 0,
+  returnPositionRight = 0 
+}) {
   const carRef = useRef();
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
-  const speed = 0.1;
+  // const speed = 0.3; // Removed hardcoded speed
+
+  // Load the GLB model
+  const { scene } = useGLTF('/src/assets/objects/carritochatgptsoso.glb');
+
+  // Clone the scene and apply modifications once per instance
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone();
+    clone.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        // Apply desired material and properties to the clone
+        child.material = new THREE.MeshStandardMaterial({ color: 0x0000ff }); 
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return clone;
+  }, [scene]); // Re-clone only if the original scene object changes
 
   useFrame((state, delta) => {
-    // FIX THIS THE CAR IS MOVING FROM ONE SIDE TO THE OTHER SHOULD APPEAR FROM THE OTHER SIDE ONCE IT REACHES THE END
     if (carRef.current) {
-      // Move the car
-      carRef.current.position.z += speed * direction;
-      
+      // Move the car using the speed prop
+      carRef.current.position.z += speed * direction * delta * 60; // Multiply by delta and a factor (e.g., 60) for frame-rate independence
       // Check if car reached the boundaries
-      if (carRef.current.position.z >= 30) {
+      if (carRef.current.position.z >= 80) {
         setDirection(-1);
-      } else if (carRef.current.position.z <= 0) {        
+        carRef.current.position.x = returnPositionRight; // Use prop
+        carRef.current.rotation.y = Math.PI;
+      } else if (carRef.current.position.z <= -80) {   
         setDirection(1);
+        carRef.current.position.x = returnPositionLeft; // Use prop
+        carRef.current.rotation.y = 0;
       }
     }
   });
 
   return (
-    <group ref={carRef} position={[0, 0.5, 0]} rotation={rotation}>
-      {/* Car body */}
-      <mesh>
-        <boxGeometry args={[2, 0.5, 4]} />
-        <meshPhysicalMaterial 
-          color="#ff0000" 
-          metalness={0.9}
-          roughness={0.1}
-          clearcoat={1.0}
-          clearcoatRoughness={0.1}
-        />
-      </mesh>
-      
-      {/* Car roof */}
-      <mesh position={[0, 0.5, 0]}>
-        <boxGeometry args={[1.5, 0.4, 2]} />
-        <meshPhysicalMaterial 
-          color="#ff0000" 
-          metalness={0.9}
-          roughness={0.1}
-          clearcoat={1.0}
-          clearcoatRoughness={0.1}
-        />
-      </mesh>
-      
+    <group ref={carRef} position={position} rotation={rotation}>
+      <primitive object={clonedScene}/>
       {/* Headlights */}
-      <mesh position={[1, 0, 1.5]}>
-        <boxGeometry args={[0.2, 0.2, 0.2]} />
-        <meshStandardMaterial 
-          color="#ffffff" 
-          emissive="#ffffff"
-          emissiveIntensity={1}
-        />
-      </mesh>
+      <pointLight position={[0.5, 0.3, 1.5]} intensity={5} color="#ffffff" />
+      <pointLight position={[-0.5, 0.3, 1.5]} intensity={5} color="#ffffff" />
       
       {/* Taillights */}
-      <mesh position={[-1, 0, -1.5]}>
-        <boxGeometry args={[0.2, 0.2, 0.2]} />
-        <meshStandardMaterial 
-          color="#ff0000" 
-          emissive="#ff0000"
-          emissiveIntensity={1}
-        />
-      </mesh>
-      
-      {/* Point lights */}
-      <pointLight position={[1, 0, 1.5]} intensity={1} color="#ffffff" />
-      <pointLight position={[-1, 0, -1.5]} intensity={1} color="#ff0000" />
+      <pointLight position={[0.5, 0.3, -1.5]} intensity={1} color="#ff0000" />
+      <pointLight position={[-0.5, 0.3, -1.5]} intensity={1} color="#ff0000" />
     </group>
   );
 }

@@ -2,7 +2,6 @@ import { Environment, Lightformer } from "@react-three/drei";
 const EnvMap = () => {
   return (
     <Environment
-      
       files={["./3.jpg"]}
     >
       <Lightformer

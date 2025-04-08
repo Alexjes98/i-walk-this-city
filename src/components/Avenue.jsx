@@ -1,5 +1,5 @@
 import { SpotLight } from "@react-three/drei";
-import Car from './Car';
+import Car from "./Car";
 
 function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   // Create an array of positions for the street lights
@@ -93,9 +93,12 @@ function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
           </group>
         );
       })}
-      
+
       {/* Add the animated car */}
-      <Car position={[0, 0.5, 0]} rotation={[0, 0, 0]} />
+      <Car position={[0, 0.5, 0]} rotation={[0, 0, 0]} speed={0.3} returnPositionLeft={0} returnPositionRight={12} />
+      <Car position={[2, 0.5, 0]} rotation={[0, 0, 0]} speed={0.5} returnPositionLeft={-1} returnPositionRight={14} />
+      <Car position={[4, 0.5, 0]} rotation={[0, 0, 0]} speed={0.8} returnPositionLeft={-2} returnPositionRight={16} />
+      
     </group>
   );
 }

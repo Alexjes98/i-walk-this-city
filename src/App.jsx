@@ -266,8 +266,7 @@ function CityScene() {
       <mesh position={[10, 1, 10]}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshPhysicalMaterial {...glassMaterial} />
-      </mesh>
-      
+      </mesh>      
       {/* Environment map for reflections */}
       <EnvMap />
       {/* Add fog for atmosphere */}
