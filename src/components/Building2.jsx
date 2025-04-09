@@ -17,6 +17,15 @@ function Building2({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
     { position: [5, -10, -25], rotation: [0, 0, 0] },
   ];
 
+  const roofLights = [
+    { position: [3, -5, 0], rotation: [0, 0, 0] },
+    { position: [3, -5, -5], rotation: [0, 0, 0] },
+    { position: [3, -5, -10], rotation: [0, 0, 0] },
+    { position: [3, -5, -15], rotation: [0, 0, 0] },
+    { position: [3, -5, -20], rotation: [0, 0, 0] },
+    { position: [3, -5, -25], rotation: [0, 0, 0] },
+  ];
+
   const dividers = [
     { position: [-3, 2, -2.5], rotation: [0, 0, 0] },
     { position: [-3, 2, -7.5], rotation: [0, 0, 0] },
@@ -45,6 +54,18 @@ function Building2({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <boxGeometry args={[5, 0.2, 27]} />
         <meshStandardMaterial color="black" />
       </mesh>
+      {/* roof lights*/}
+      {roofLights.map((light, index) => (
+        <pointLight
+          key={index}
+          position={light.position}
+          rotation={light.rotation}
+          color="#00fff2"
+          intensity={5}
+          distance={10}
+          decay={0.5}
+        />
+      ))}
       {/* glass*/}
       <mesh position={[-3, 2, -12.5]} rotation={[0, 0, Math.PI / 2]}>
         <boxGeometry args={[25, 0.2, 27]} />
@@ -66,6 +87,12 @@ function Building2({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
         <boxGeometry args={[25, 30, 27]} />
         <meshStandardMaterial color="grey" />
       </mesh>
+      <pointLight          
+        position={[-15.6, 0, -12]}
+        rotation={[0, 0, 0]}
+        color="blue"
+        intensity={100}
+      />
     </group>
   );
 }
