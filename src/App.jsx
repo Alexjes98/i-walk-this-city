@@ -4,6 +4,7 @@ import { ContactShadows, OrbitControls, SpotLight } from "@react-three/drei";
 import { useRef } from "react";
 import EnvMap from "./EnvMap";
 import Building1 from "./components/Building1";
+import Building2 from "./components/Building2";
 import Avenue from "./components/Avenue";
 import NeonLine from "./components/NeonLine";
 import "./styles.css";
@@ -95,6 +96,7 @@ function CityScene() {
       
       {/* Buildings */}
       <Building1 position={[-20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
+      <Building2 position={[-20, 0, 40]} rotation={[0, 0, 0]} />
       <Avenue position={[-5,-10, 0]} rotation={[0, 0, 0]} />
       {/* Add visible guides for lights in Building1 */}
       
@@ -115,31 +117,6 @@ function CityScene() {
         thickness={0.15}
       />
       {/* Vertical building edge lights */}
-      <NeonLine
-        start={[-23, -10, -8]}
-        end={[-23, 33, -8]}
-        color="#0077ff"
-        thickness={0.15}
-      />
-      <NeonLine
-        start={[-17, -10, -8]}
-        end={[-17, 33, -8]}
-        color="#0077ff"
-        thickness={0.15}
-      />
-      <NeonLine
-        start={[-23, -10, 8]}
-        end={[-23, 33, 8]}
-        color="#0077ff"
-        thickness={0.15}
-      />
-      <NeonLine
-        start={[-17, -10, 8]}
-        end={[-17, 33, 8]}
-        color="#0077ff"
-        thickness={0.15}
-      />
-
       {/* Building window outlines */}
       <NeonLine
         start={[-17.7, 10, 7.3]}
