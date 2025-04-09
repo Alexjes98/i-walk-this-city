@@ -33,10 +33,6 @@ function Building2({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
 
   return (
     <group position={position} rotation={rotation}>
-      <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="gray" />
-      </mesh>
       {/* pilars*/}
       {pilars.map((pilar, index) => (
         <mesh key={index} position={pilar.position} rotation={pilar.rotation}>
