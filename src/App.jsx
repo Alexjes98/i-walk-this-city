@@ -5,6 +5,10 @@ import { useRef } from "react";
 import EnvMap from "./EnvMap";
 import Building1 from "./components/Building1";
 import Building2 from "./components/Building2";
+import Building3 from "./components/Building3";
+import Building4 from "./components/Building4";
+import Building5 from "./components/Building5";
+import BackGroundBuilding from "./components/BackGroundBuilding";
 import Avenue from "./components/Avenue";
 import NeonLine from "./components/NeonLine";
 import "./styles.css";
@@ -98,6 +102,10 @@ function CityScene() {
       <Building1 position={[-20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
       <Building2 position={[-20, 0, 40]} rotation={[0, 0, 0]} />
       <Avenue position={[-5,-10, 0]} rotation={[0, 0, 0]} />
+      <Building3 position={[20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
+      <Building4 position={[28, -10, -20]} rotation={[0, 0, 0]} />
+      <Building5 position={[20, 0, 80]} rotation={[0, 0, 0]} />
+      <BackGroundBuilding position={[-65, 40, -20]} rotation={[0, 0, 0]} />
       {/* Add visible guides for lights in Building1 */}
       
       <LightGuide position={[-5, 17, 0]} color="white" size={0.5} />
@@ -124,12 +132,7 @@ function CityScene() {
         color="#ff00aa"
         thickness={0.08}
       />
-      <NeonLine
-        start={[-21.5, 14, -8.5]}
-        end={[-16.5, 14, -8.5]}
-        color="#ff00aa"
-        thickness={0.08}
-      />
+      
       <NeonLine
         start={[-21.5, 15, -8.5]}
         end={[-16.5, 15, -8.5]}
@@ -154,7 +157,6 @@ function CityScene() {
         color="#ff00aa"
         thickness={0.08}
       />
-
       {/* Ground grid lines */}
       {[...Array(5)].map((_, i) => (
         <NeonLine

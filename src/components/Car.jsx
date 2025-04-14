@@ -1,21 +1,22 @@
-import { useRef, useState, useEffect, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
+import { useRef, useState, useEffect, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useGLTF } from "@react-three/drei";
+import * as THREE from "three";
 
-function Car({ 
-  position = [0, 0, 0], 
-  rotation = [0, 0, 0], 
+function Car({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
   speed = 0.3,
+  isOn = true,
   returnPositionLeft = 0,
-  returnPositionRight = 0 
+  returnPositionRight = 0,
 }) {
   const carRef = useRef();
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
   // const speed = 0.3; // Removed hardcoded speed
 
   // Load the GLB model
-  const { scene } = useGLTF('/src/assets/objects/carritochatgptsoso.glb');
+  const { scene } = useGLTF("/src/assets/objects/carritochatgptsoso.glb");
 
   // Clone the scene and apply modifications once per instance
   const clonedScene = useMemo(() => {
@@ -23,7 +24,7 @@ function Car({
     clone.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         // Apply desired material and properties to the clone
-        child.material = new THREE.MeshStandardMaterial({ color: 0x0000ff }); 
+        child.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
         child.castShadow = true;
         child.receiveShadow = true;
       }
@@ -40,7 +41,7 @@ function Car({
         setDirection(-1);
         carRef.current.position.x = returnPositionRight; // Use prop
         carRef.current.rotation.y = Math.PI;
-      } else if (carRef.current.position.z <= -80) {   
+      } else if (carRef.current.position.z <= -80) {
         setDirection(1);
         carRef.current.position.x = returnPositionLeft; // Use prop
         carRef.current.rotation.y = 0;
@@ -50,16 +51,36 @@ function Car({
 
   return (
     <group ref={carRef} position={position} rotation={rotation}>
-      <primitive object={clonedScene}/>
+      <primitive object={clonedScene} />
       {/* Headlights */}
-      <pointLight position={[0.5, 0.3, 1.5]} intensity={5} color="#ffffff" />
-      <pointLight position={[-0.5, 0.3, 1.5]} intensity={5} color="#ffffff" />
-      
+      {isOn && (
+        <>
+          <pointLight
+            position={[0.5, 0.3, 1.5]}
+            intensity={5}
+            color="#ffffff"
+          />
+          <pointLight
+            position={[-0.5, 0.3, 1.5]}
+            intensity={5}
+            color="#ffffff"
+          />
+          <pointLight
+            position={[0.5, 0.3, -1.5]}
+            intensity={1}
+            color="#ff0000"
+          />
+          <pointLight
+            position={[-0.5, 0.3, -1.5]}
+            intensity={1}
+            color="#ff0000"
+          />
+        </>
+      )}
+
       {/* Taillights */}
-      <pointLight position={[0.5, 0.3, -1.5]} intensity={1} color="#ff0000" />
-      <pointLight position={[-0.5, 0.3, -1.5]} intensity={1} color="#ff0000" />
     </group>
   );
 }
 
-export default Car; 
+export default Car;
