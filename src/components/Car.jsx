@@ -15,8 +15,8 @@ function Car({
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
   // const speed = 0.3; // Removed hardcoded speed
 
-  // Load the GLB model
-  const { scene } = useGLTF("/src/assets/objects/carritochatgptsoso.glb");
+  // Load the GLB model with suspense
+  const { scene } = useGLTF("/src/assets/objects/carritochatgptsoso.glb", true);
 
   // Clone the scene and apply modifications once per instance
   const clonedScene = useMemo(() => {
@@ -82,5 +82,8 @@ function Car({
     </group>
   );
 }
+
+// Preload the model
+useGLTF.preload("/src/assets/objects/carritochatgptsoso.glb");
 
 export default Car;

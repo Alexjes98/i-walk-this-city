@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, OrbitControls, SpotLight } from "@react-three/drei";
-import { useRef } from "react";
+import { useRef, Suspense } from "react";
 import EnvMap from "./EnvMap";
 import Building1 from "./components/Building1";
 import Building2 from "./components/Building2";
@@ -11,6 +11,7 @@ import Building5 from "./components/Building5";
 import BackGroundBuilding from "./components/BackGroundBuilding";
 import Avenue from "./components/Avenue";
 import NeonLine from "./components/NeonLine";
+import LoadingScreen from "./components/LoadingScreen";
 import "./styles.css";
 
 // Light guide component for point lights
@@ -258,14 +259,16 @@ function App() {
   return (
     <div id="canvas-container">
       <Canvas camera={{ position: [0, 8, 25], fov: 45 }} shadows>
-        <CityScene />
-        <OrbitControls
-          enablePan={true}
-          enableZoom={true}
-          enableRotate={true}
-          minDistance={2}
-          maxDistance={50}
-        />
+        <Suspense fallback={<LoadingScreen />}>
+          <CityScene />
+          <OrbitControls
+            enablePan={true}
+            enableZoom={true}
+            enableRotate={true}
+            minDistance={2}
+            maxDistance={50}
+          />
+        </Suspense>
       </Canvas>
     </div>
   );
