@@ -64,11 +64,6 @@ const DecorativeRing = ({ position }) => (
     </mesh>
   </group>
 );
-
-DecorativeRing.propTypes = {
-  position: PropTypes.arrayOf(PropTypes.number).isRequired,
-};
-
 function Building5({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   // Generate positions for decorative rings
   const decorativePositions = Array.from(

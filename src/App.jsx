@@ -191,27 +191,6 @@ function CityScene() {
         color="#00ff99"
         thickness={0.12}
       />
-
-      {/* Flying neon rings */}
-      <mesh position={[10, 5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[5, 0.1, 16, 100]} />
-        <meshStandardMaterial
-          color="#ff00ff"
-          emissive="#ff00ff"
-          emissiveIntensity={2}
-          toneMapped={false}
-        />
-      </mesh>
-      <mesh position={[10, 5, 0]} rotation={[Math.PI / 2, Math.PI / 4, 0]}>
-        <torusGeometry args={[4, 0.1, 16, 100]} />
-        <meshStandardMaterial
-          color="#00ffff"
-          emissive="#00ffff"
-          emissiveIntensity={2}
-          toneMapped={false}
-        />
-      </mesh>
-
       {/* Lighting */}      
       
       <LightGuide position={[0, 1, 3]} color="white" />
