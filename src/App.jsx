@@ -101,7 +101,7 @@ function CityScene() {
       <Building1 position={[-20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
       <Building2 position={[-20, 0, 40]} rotation={[0, 0, 0]} />
       <Avenue position={[-5,-10, 0]} rotation={[0, 0, 0]} />
-      <Building3 position={[36, 0, 42]} rotation={[0, Math.PI/2, 0]} />
+      <Building3 position={[37, 0, 42]} rotation={[0, Math.PI/2, 0]} />
       <Building4 position={[28, -10, -20]} rotation={[0, 0, 0]} />
       <Building5 position={[30, 15, 10]} rotation={[0, 0, 0]} />
       <BackGroundBuilding position={[-65, 40, -20]} rotation={[0, 0, 0]} />
@@ -191,7 +191,7 @@ function CityScene() {
       />
       {/* Lighting */}      
       
-      <LightGuide position={[0, 1, 3]} color="white" />
+      <LightGuide position={[0, 1, 0]} color="white" />
       
       {/* Spotlights for dramatic lighting */}
       <SpotLight 

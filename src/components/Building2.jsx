@@ -1,13 +1,12 @@
-
-function Building2({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
-  const glassMaterial = {
-    transparent: true,
-    opacity: 0.5,
-    color: "#ffffff",
-    metalness: 0.9,
-    roughness: 0.05,
-    envMapIntensity: 2.5,
-  };
+const glassMaterial = {
+  transparent: true,
+  opacity: 0.5,
+  color: "#ffffff",
+  metalness: 0.9,
+  roughness: 0.05,
+  envMapIntensity: 2.5,
+};
+function Building2({ position = [0, 0, 0], rotation = [0, 0, 0] }) {  
 
   const pilars = [
     { position: [5, -10, 0], rotation: [0, 0, 0] },

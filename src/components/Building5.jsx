@@ -18,7 +18,7 @@ const GLASS_MATERIAL = {
   roughness: 0.05,
   transmission: 0.6,
   reflectivity: 5,
-  clearcoat: 1,
+  clearcoat: 1,  
   clearcoatRoughness: 0.1,
   envMapIntensity: 2.5,
   ior: 1.52,
