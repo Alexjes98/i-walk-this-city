@@ -1,6 +1,6 @@
 import { SpotLight } from "@react-three/drei";
 import Car from "./Car";
-
+import PoliceSirens from "./PoliceSirens";
 function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   // Create an array of positions for the street lights
   const lightPositions = [
@@ -95,10 +95,35 @@ function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
       })}
 
       {/* Add the animated car */}
-      <Car position={[0, 0.5, 0]} rotation={[0, 0, 0]} speed={0.3} returnPositionLeft={0} returnPositionRight={12} />
-      <Car position={[2, 0.5, 0]} rotation={[0, 0, 0]} speed={0.5} returnPositionLeft={-1} returnPositionRight={14} />
-      <Car position={[4, 0.5, 0]} rotation={[0, 0, 0]} speed={0.8} returnPositionLeft={-2} returnPositionRight={16} />
-      
+      <Car
+        position={[0, 0.5, 0]}
+        rotation={[0, 0, 0]}
+        speed={0.3}
+        returnPositionLeft={0}
+        returnPositionRight={12}
+      />
+      <Car
+        position={[2, 0.5, 0]}
+        rotation={[0, 0, 0]}
+        speed={0.5}
+        returnPositionLeft={-1}
+        returnPositionRight={14}
+      />
+      <Car
+        position={[4, 0.5, 0]}
+        rotation={[0, 0, 0]}
+        speed={0.8}
+        returnPositionLeft={-2}
+        returnPositionRight={16}
+      />
+      <Car
+        position={[4, 0.5, 0]}
+        rotation={[0, 0, 0]}
+        speed={0.8}
+        returnPositionLeft={-2}
+        returnPositionRight={16}
+        accessories={[<PoliceSirens />]}
+      />
     </group>
   );
 }

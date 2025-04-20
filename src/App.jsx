@@ -10,6 +10,7 @@ import Building4 from "./components/Building4";
 import Building5 from "./components/Building5";
 import BackGroundBuilding from "./components/BackGroundBuilding";
 import Avenue from "./components/Avenue";
+import MyFirstCar from "./components/MFC";
 import NeonLine from "./components/NeonLine";
 import LoadingScreen from "./components/LoadingScreen";
 import "./styles.css";
@@ -98,7 +99,7 @@ function CityScene() {
         <planeGeometry args={[90, 90]} />
         <meshPhongMaterial color="#ffffff" />
       </mesh>
-      
+      <MyFirstCar position={[23, -0.45, -9]} rotation={[0, 0, 0]} />
       {/* Buildings */}
       <Building1 position={[-20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
       <Building2 position={[-20, 0, 40]} rotation={[0, 0, 0]} />

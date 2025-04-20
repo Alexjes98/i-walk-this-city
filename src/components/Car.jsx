@@ -10,6 +10,7 @@ function Car({
   isOn = true,
   returnPositionLeft = 0,
   returnPositionRight = 0,
+  accessories = [],
 }) {
   const carRef = useRef();
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
@@ -51,6 +52,13 @@ function Car({
 
   return (
     <group ref={carRef} position={position} rotation={rotation}>
+      {accessories.map((accessory, index) => {
+        return (
+          <group key={index}>
+            {accessory}
+          </group>
+        )
+      })}
       <primitive object={clonedScene} />
       {/* Headlights */}
       {isOn && (
