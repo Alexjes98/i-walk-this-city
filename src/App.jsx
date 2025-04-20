@@ -89,14 +89,11 @@ function CityScene() {
     }
   });
 
-  const panelPosition = [3, 0, 15];
-  const panelRotation = [0,-Math.PI/1.2, 0];
-  
   return (
     <>
       {/* Ground */}
       <mesh position={[0, -10, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[90, 90]} />
+        <planeGeometry args={[150, 150]} />
         <meshPhongMaterial color="#ffffff" />
       </mesh>
       <MyFirstCar position={[23, -0.45, -9]} rotation={[0, 0, 0]} />
@@ -104,12 +101,12 @@ function CityScene() {
       <Building1 position={[-20, 0, 0]} rotation={[0, Math.PI/2, 0]} />
       <Building2 position={[-20, 0, 40]} rotation={[0, 0, 0]} />
       <Avenue position={[-5,-10, 0]} rotation={[0, 0, 0]} />
-      <Building3 position={[0, 0, -30]} rotation={[0, Math.PI/2, 0]} />
+      <Building3 position={[36, 0, 42]} rotation={[0, Math.PI/2, 0]} />
       <Building4 position={[28, -10, -20]} rotation={[0, 0, 0]} />
       <Building5 position={[30, 15, 10]} rotation={[0, 0, 0]} />
       <BackGroundBuilding position={[-65, 40, -20]} rotation={[0, 0, 0]} />
-      {/* Add visible guides for lights in Building1 */}
       
+      {/* Add visible guides for lights in Building1 */}      
       <LightGuide position={[-5, 17, 0]} color="white" size={0.5} />
 
       {/* Cyberpunk Neon Lights */}
@@ -207,8 +204,7 @@ function CityScene() {
         castShadow 
       />
       <LightGuide position={[15, 20, 0]} color="#ff00ff" />
-      
-      <SpotLight 
+      <SpotLight
         ref={spotLightRef}
         position={[-15, 15, 5]} 
         angle={0.5} 
@@ -221,12 +217,7 @@ function CityScene() {
       {/* Moving light guide that follows the animated spotlight */}
       <group ref={movingLightRef} position={[-15, 15, 5]}>
         <LightGuide position={[0, 0, 0]} color="#00ffff" />
-      </group>
-      
-      <mesh position={[10, 1, 10]}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshPhysicalMaterial {...glassMaterial} />
-      </mesh>      
+      </group>  
       {/* Environment map for reflections */}
       <EnvMap />
       {/* Add fog for atmosphere */}

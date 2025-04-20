@@ -122,22 +122,22 @@ function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
 
       {/* Add the animated car */}
       <Car
-        position={[-1, 0.5, 0]}
+        position={[-1, 0.5, -70]}
         rotation={[0, 0, 0]}
         behaviour={carBehaviour}
       />
       <Car
-        position={[1, 0.5, 0]}
+        position={[1, 0.5, 20]}
         rotation={[0, 0, 0]}
         behaviour={carBehaviour}
       />
       <Car
-        position={[3, 0.5, 0]}
+        position={[3, 0.5, -60]}
         rotation={[0, 0, 0]}
         behaviour={carBehaviour}
       />
       <Car
-        position={[5, 0.5, 0]}
+        position={[5, 0.5, 79]}
         rotation={[0, 0, 0]}
         accessories={[<PoliceSirens />]}
         behaviour={carBehaviour}
