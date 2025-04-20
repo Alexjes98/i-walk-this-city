@@ -6,16 +6,23 @@ import * as THREE from "three";
 function Car({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
-  speed = 0.3,
-  isOn = true,
-  returnPositionLeft = 0,
-  returnPositionRight = 0,
+  isOn = true,  
+  behaviour = null,
   accessories = [],
 }) {
   const carRef = useRef();
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
-  // const speed = 0.3; // Removed hardcoded speed
-
+  const [latestDirection, setLatestDirection] = useState(1);
+  const [speed, setSpeed] = useState(0.3 + (Math.random() * 0.5));
+  const [returnPositionLeft, setReturnPositionLeft] = useState(-3 + (Math.random() * 8)); // Random number between -3 and 5
+  const [returnPositionRight, setReturnPositionRight] = useState(10 + (Math.random() * 8)); // Random number between 10 and 18
+  
+  if (latestDirection !== direction) {
+    setLatestDirection(direction);
+    setSpeed(0.3 + (Math.random() * 0.5));
+    setReturnPositionLeft(-3 + (Math.random() * 8)); // Random number between -3 and 5
+    setReturnPositionRight(10 + (Math.random() * 8)); // Random number between 10 and 18
+  }
   // Load the GLB model with suspense
   const { scene } = useGLTF("/src/assets/objects/carritochatgptsoso.glb", true);
 
@@ -34,19 +41,8 @@ function Car({
   }, [scene]); // Re-clone only if the original scene object changes
 
   useFrame((state, delta) => {
-    if (carRef.current) {
-      // Move the car using the speed prop
-      carRef.current.position.z += speed * direction * delta * 60; // Multiply by delta and a factor (e.g., 60) for frame-rate independence
-      // Check if car reached the boundaries
-      if (carRef.current.position.z >= 80) {
-        setDirection(-1);
-        carRef.current.position.x = returnPositionRight; // Use prop
-        carRef.current.rotation.y = Math.PI;
-      } else if (carRef.current.position.z <= -80) {
-        setDirection(1);
-        carRef.current.position.x = returnPositionLeft; // Use prop
-        carRef.current.rotation.y = 0;
-      }
+    if (behaviour) {
+      setDirection(behaviour(state, delta, carRef, speed, direction,returnPositionLeft,returnPositionRight) || direction);
     }
   });
 
