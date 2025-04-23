@@ -35,6 +35,7 @@ function Car({
         child.material = new THREE.MeshStandardMaterial({ color: 0x0000ff });
         child.castShadow = true;
         child.receiveShadow = true;
+        child.scale.set(1, 1, 1);
       }
     });
     return clone;
