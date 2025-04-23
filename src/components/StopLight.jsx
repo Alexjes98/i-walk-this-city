@@ -13,6 +13,14 @@ const STOPLIGHT_CONFIG = {
     topDepth: 0.5,
     color: "#787878",
   },
+  poleDecorator: {
+    position: [0, 3, 0.3],
+    width: 0.2,
+    height: 6,
+    depth: 0.2,
+    color: "#787878",    
+    emissiveIntensity: 1,
+  },
   box: {
     position: [7, 5.5, 0],
     width: 1,
@@ -50,6 +58,8 @@ function StopLight({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const [activeLight, setActiveLight] = useState("red");
   const [timeElapsed, setTimeElapsed] = useState(0);
 
+  const [poleDecoratorColor, setPoleDecoratorColor] = useState(STOPLIGHT_CONFIG.poleDecorator.color);
+
   useFrame((state, delta) => {
     setTimeElapsed((prev) => prev + delta);
 
@@ -60,18 +70,21 @@ function StopLight({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
     ) {
       setActiveLight("yellow");
       setTimeElapsed(0);
+      setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.yellow.color);
     } else if (
       activeLight === "yellow" &&
       timeElapsed >= STOPLIGHT_CONFIG.lights.yellow.duration
     ) {
       setActiveLight("green");
       setTimeElapsed(0);
+      setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.green.color);
     } else if (
       activeLight === "green" &&
       timeElapsed >= STOPLIGHT_CONFIG.lights.green.duration
     ) {
       setActiveLight("red");
       setTimeElapsed(0);
+      setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.red.color);
     }
   });
 
@@ -87,6 +100,14 @@ function StopLight({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
           ]}
         />
         <meshStandardMaterial color={STOPLIGHT_CONFIG.pole.color} />
+      </mesh>
+      <mesh position={STOPLIGHT_CONFIG.poleDecorator.position} rotation={[0, 0, 0]}>
+        <boxGeometry args={[STOPLIGHT_CONFIG.poleDecorator.width, STOPLIGHT_CONFIG.poleDecorator.height, STOPLIGHT_CONFIG.poleDecorator.depth]} />
+        <meshStandardMaterial
+          color={poleDecoratorColor}
+          emissive={poleDecoratorColor}
+          emissiveIntensity={STOPLIGHT_CONFIG.poleDecorator.emissiveIntensity}
+        />
       </mesh>
       {/* Top */}
       <mesh

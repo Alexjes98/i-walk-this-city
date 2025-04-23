@@ -111,6 +111,7 @@ function CityScene() {
 
       {/* Cyberpunk Neon Lights */}
       {/* Horizontal building edge lights */}
+      {/*
       <NeonLine
         start={[-23, -10, -8]}
         end={[-17, -10, -8]}
@@ -123,8 +124,10 @@ function CityScene() {
         color="#ff00ff"
         thickness={0.15}
       />
+      */}
       {/* Vertical building edge lights */}
       {/* Building window outlines */}
+      {/*
       <NeonLine
         start={[-17.7, 10, 7.3]}
         end={[1.5, 12, 8.5]}
@@ -156,7 +159,9 @@ function CityScene() {
         color="#ff00aa"
         thickness={0.08}
       />
+      */}
       {/* Ground grid lines */}
+      {/*
       {[...Array(5)].map((_, i) => (
         <NeonLine
           key={`grid-x-${i}`}
@@ -175,8 +180,9 @@ function CityScene() {
           thickness={0.05}
         />
       ))}
-
+      */}
       {/* Diagonal accent lines */}
+      {/*
       <NeonLine
         start={[-15, -10, 10]}
         end={[15, 10, -10]}
@@ -189,9 +195,10 @@ function CityScene() {
         color="#00ff99"
         thickness={0.12}
       />
-      {/* Lighting */}      
-      
+      */}
+      {/* Lighting */}            
       <LightGuide position={[0, 1, 0]} color="white" />
+      
       
       {/* Spotlights for dramatic lighting */}
       <SpotLight 

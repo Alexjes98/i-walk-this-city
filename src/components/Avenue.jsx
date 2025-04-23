@@ -1,59 +1,63 @@
 import Car from "./Car";
 import StopLight from "./StopLight";
 import PoliceSirens from "./PoliceSirens";
+import Pedestrian from "./Pedestrian";
+import StreetLight from "./StreetLight";
+import Street from "./Street";
+import Sidewalk from "./Sidewalk";
+import StreetSeparator from "./StreetSeparator";
+import { pedestrianBehaviour } from "../utils/pedestrianMovement";
+import { carBehaviour } from "../utils/carMovement";
+// Entity configurations
+const CAR_CONFIGS = [
+  {
+    position: [-1, 0.5, -70],
+    rotation: [0, 0, 0],
+    accessories: [],
+  },
+  {
+    position: [1, 0.5, 20],
+    rotation: [0, 0, 0],
+    accessories: [],
+  },
+  {
+    position: [3, 0.5, -60],
+    rotation: [0, 0, 0],
+    accessories: [],
+  },
+  {
+    position: [5, 0.5, 79],
+    rotation: [0, 0, 0],
+    accessories: [<PoliceSirens />],
+  },
+];
 
-// Constants
-const STREET_CONFIG = {
-  width: 12,
-  height: 0.5,
-  length: 200,
-  color: "#9c9c9c",
-};
+const PEDESTRIAN_CONFIGS = [
+  // Left sidewalk pedestrians
+  { position: [-6, 0.95, -30], direction: 1 },
+  { position: [-6, 0.95, 10], direction: -1 },
+  { position: [-6, 0.95, 40], direction: 1 },
+  
+  // Right sidewalk pedestrians
+  { position: [21, 0.95, -20], direction: 1 },
+  { position: [21, 0.95, 20], direction: -1 },
+  { position: [21, 0.95, 50], direction: 1 },
+  
+  // Crosswalk pedestrians
+  { position: [-40, 0.95, -50], direction: 1 },
+  { position: [60, 0.95, -50], direction: -1 },
+];
 
-const Sidewalk_CONFIG = {
-  width: 4,
-  height: 1,
-  color: "gray",
-};
-
-const STREET_SEPARATOR_CONFIG = {
-  width: 3,
-  height: 2,
-  length: 88,
-  color: "gray",
-};
-
-const LIGHT_CONFIG = {
-  pole: {
-    width: 0.5,
-    height: 3,
-    depth: 0.5,
-    color: "#333333",
+const STOPLIGHT_CONFIGS = [
+  {
+    position: [7, 0, -58],
+    rotation: [0, 0, 0],
   },
-  cylinder: {
-    radius: 0.1,
-    height: 9,
-    color: "#333333",
+  {
+    position: [7, 0, -40],
+    rotation: [0, Math.PI, 0],
   },
-  fixture: {
-    width: 1,
-    height: 0.2,
-    depth: 0.5,
-    color: "#666666",
-  },
-  glow: {
-    radius: 0.3,
-    color: "red",
-    emissive: "#e0006c",
-    emissiveIntensity: 0.5,
-  },
-  pointLight: {
-    intensity: 20,
-    distance: 10,
-    decay: 0.9,
-    color: "#e0006c",
-  },
-};
+];
 
 // Helper functions
 const generateLightPositions = () => {
@@ -69,111 +73,6 @@ const generateLightPositions = () => {
 
   return positions;
 };
-
-function carBehaviour(
-  state,
-  delta,
-  carRef,
-  speed,
-  direction,
-  returnPositionLeft,
-  returnPositionRight
-) {
-  if (carRef.current) {
-    // Move the car using the speed prop
-    carRef.current.position.z += speed * direction * delta * 60; // Multiply by delta and a factor (e.g., 60) for frame-rate independence
-    // Check if car reached the boundaries
-    if (carRef.current.position.z >= 80) {
-      carRef.current.position.x = returnPositionRight; // Use prop
-      carRef.current.rotation.y = Math.PI;
-      return -1;
-    } else if (carRef.current.position.z <= -80) {
-      carRef.current.position.x = returnPositionLeft; // Use prop
-      carRef.current.rotation.y = 0;
-      return 1;
-    }
-  }
-}
-
-const StreetLight = ({ position, rotation }) => (
-  <group position={position} rotation={[0, rotation, 0]}>
-    <mesh>
-      <boxGeometry
-        args={[
-          LIGHT_CONFIG.pole.width,
-          LIGHT_CONFIG.pole.height,
-          LIGHT_CONFIG.pole.depth,
-        ]}
-      />
-      <meshStandardMaterial color={LIGHT_CONFIG.pole.color} />
-    </mesh>
-    <mesh position={[0, 3, 0]}>
-      <cylinderGeometry
-        args={[
-          LIGHT_CONFIG.cylinder.radius,
-          LIGHT_CONFIG.cylinder.radius,
-          LIGHT_CONFIG.cylinder.height,
-          8,
-        ]}
-      />
-      <meshStandardMaterial color={LIGHT_CONFIG.cylinder.color} />
-    </mesh>
-    <mesh position={[-0.4, 7.5, 0]}>
-      <boxGeometry
-        args={[
-          LIGHT_CONFIG.fixture.width,
-          LIGHT_CONFIG.fixture.height,
-          LIGHT_CONFIG.fixture.depth,
-        ]}
-      />
-      <meshStandardMaterial color={LIGHT_CONFIG.fixture.color} />
-    </mesh>
-    <mesh position={[-0.5, 7.2, 0]}>
-      <dodecahedronGeometry args={[LIGHT_CONFIG.glow.radius, 0]} />
-      <meshStandardMaterial
-        color={LIGHT_CONFIG.glow.color}
-        emissive={LIGHT_CONFIG.glow.emissive}
-        emissiveIntensity={LIGHT_CONFIG.glow.emissiveIntensity}
-      />
-    </mesh>
-    <pointLight
-      position={[-3, 7, 0]}
-      intensity={LIGHT_CONFIG.pointLight.intensity}
-      distance={LIGHT_CONFIG.pointLight.distance}
-      decay={LIGHT_CONFIG.pointLight.decay}
-      color={LIGHT_CONFIG.pointLight.color}
-    />
-  </group>
-);
-
-const Street = ({ position, rotation, length }) => (
-  <mesh position={position} rotation={rotation}>
-    <boxGeometry args={[STREET_CONFIG.width, STREET_CONFIG.height, length]} />
-    <meshStandardMaterial color={STREET_CONFIG.color} />
-  </mesh>
-);
-
-const Sidewalk = ({ position, length, rotation }) => (
-  <mesh position={position} rotation={rotation}>
-    <boxGeometry
-      args={[Sidewalk_CONFIG.width, Sidewalk_CONFIG.height, length]}
-    />
-    <meshStandardMaterial color={Sidewalk_CONFIG.color} />
-  </mesh>
-);
-
-const StreetSeparator = ({ position }) => (
-  <mesh position={position}>
-    <boxGeometry
-      args={[
-        STREET_SEPARATOR_CONFIG.width,
-        STREET_SEPARATOR_CONFIG.height,
-        STREET_SEPARATOR_CONFIG.length,
-      ]}
-    />
-    <meshStandardMaterial color={STREET_SEPARATOR_CONFIG.color} />
-  </mesh>
-);
 
 function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
   const lightPositions = generateLightPositions();
@@ -215,37 +114,34 @@ function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
       ))}
 
       {/* Cars */}
-      <Car
-        position={[-1, 0.5, -70]}
-        rotation={[0, 0, 0]}
-        behaviour={carBehaviour}
-      />
-      <Car
-        position={[1, 0.5, 20]}
-        rotation={[0, 0, 0]}
-        behaviour={carBehaviour}
-      />
-      <Car
-        position={[3, 0.5, -60]}
-        rotation={[0, 0, 0]}
-        behaviour={carBehaviour}
-      />
-      <Car
-        position={[5, 0.5, 79]}
-        rotation={[0, 0, 0]}
-        accessories={[<PoliceSirens />]}
-        behaviour={carBehaviour}
-      />
+      {CAR_CONFIGS.map((config, index) => (
+        <Car
+          key={index}
+          position={config.position}
+          rotation={config.rotation}
+          accessories={config.accessories}
+          behaviour={carBehaviour}
+        />
+      ))}
 
-      {/* Stop Light */}
-      <StopLight
-        position={[7, 0, -58]}
-        rotation={[0, 0, 0]}        
-      />
-      <StopLight
-        position={[7, 0, -40]}
-        rotation={[0, Math.PI, 0]}
-      />
+      {/* Stop Lights */}
+      {STOPLIGHT_CONFIGS.map((config, index) => (
+        <StopLight
+          key={index}
+          position={config.position}
+          rotation={config.rotation}
+        />
+      ))}
+
+      {/* Pedestrians */}
+      {PEDESTRIAN_CONFIGS.map((config, index) => (
+        <Pedestrian
+          key={index}
+          position={config.position}
+          direction={config.direction}
+          behaviour={pedestrianBehaviour}
+        />
+      ))}
     </group>
   );
 }
