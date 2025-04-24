@@ -50,11 +50,13 @@ const PEDESTRIAN_CONFIGS = [
 
 const STOPLIGHT_CONFIGS = [
   {
+    id: 'left-stoplight',
     position: [7, 0, -58],
     rotation: [0, 0, 0],
   },
   {
-    position: [7, 0, -40],
+    id: 'right-stoplight',
+    position: [7, 0, -42],
     rotation: [0, Math.PI, 0],
   },
 ];
@@ -128,6 +130,7 @@ function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
       {STOPLIGHT_CONFIGS.map((config, index) => (
         <StopLight
           key={index}
+          id={config.id}
           position={config.position}
           rotation={config.rotation}
         />

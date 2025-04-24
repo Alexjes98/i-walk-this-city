@@ -13,7 +13,7 @@ const BUILDING_DIMENSIONS = {
 const GLASS_MATERIAL = {
   transparent: true,
   opacity: 0.5,
-  color: "#fffffff",
+  color: "#ffffff",
   metalness: 0.9,
   roughness: 0.05,
   transmission: 0.6,

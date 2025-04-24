@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useTrafficStore } from "../utils/trafficSystem";
 
 const STOPLIGHT_CONFIG = {
   pole: {
@@ -53,12 +54,20 @@ const STOPLIGHT_CONFIG = {
   },
 };
 
-function StopLight({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+function StopLight({ id, position = [0, 0, 0], rotation = [0, 0, 0] }) {
+  
   const lightRef = useRef();
   const [activeLight, setActiveLight] = useState("red");
   const [timeElapsed, setTimeElapsed] = useState(0);
-
+  
   const [poleDecoratorColor, setPoleDecoratorColor] = useState(STOPLIGHT_CONFIG.poleDecorator.color);
+
+  const registerStoplight = useTrafficStore(state => state.registerStoplight);
+  const updateStoplightState = useTrafficStore(state => state.updateStoplightState);
+
+  useEffect(() => {    
+    registerStoplight(id, position, rotation);
+  }, []);
 
   useFrame((state, delta) => {
     setTimeElapsed((prev) => prev + delta);
@@ -68,24 +77,26 @@ function StopLight({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
       activeLight === "red" &&
       timeElapsed >= STOPLIGHT_CONFIG.lights.red.duration
     ) {
-      setActiveLight("yellow");
-      setTimeElapsed(0);
-      setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.yellow.color);
-    } else if (
-      activeLight === "yellow" &&
-      timeElapsed >= STOPLIGHT_CONFIG.lights.yellow.duration
-    ) {
       setActiveLight("green");
       setTimeElapsed(0);
       setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.green.color);
     } else if (
-      activeLight === "green" &&
-      timeElapsed >= STOPLIGHT_CONFIG.lights.green.duration
+      activeLight === "yellow" &&
+      timeElapsed >= STOPLIGHT_CONFIG.lights.yellow.duration
     ) {
       setActiveLight("red");
       setTimeElapsed(0);
       setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.red.color);
+    } else if (
+      activeLight === "green" &&
+      timeElapsed >= STOPLIGHT_CONFIG.lights.green.duration
+    ) {
+      setActiveLight("yellow");
+      setTimeElapsed(0);
+      setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.yellow.color);
     }
+
+    updateStoplightState(id, activeLight);
   });
 
   return (

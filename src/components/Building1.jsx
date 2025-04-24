@@ -3,8 +3,6 @@ import { Vector3 } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { SpotLight, useDepthBuffer } from "@react-three/drei";
 
-import NeonLine from "./NeonLine";
-
 function MovingSpot({ vec = new Vector3(), ...props }) {
   const light = useRef();
   const viewport = useThree((state) => state.viewport);
@@ -40,7 +38,7 @@ const Building1 = ({ position = [0, 0, 0], rotation = [0, 0, 0] }) => {
   const glassMaterial = {
     transparent: true,
     opacity: 0.5,
-    color: "#fffffff",
+    color: "#ffffff",
     metalness: 0.9,
     roughness: 0.05,
     transmission: 0.6,
