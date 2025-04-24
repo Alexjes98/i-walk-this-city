@@ -1,12 +1,67 @@
 import { useTrafficStore } from "./trafficSystem";
 
-const RED_LIGHT_DISTANCE = 17;
-const YELLOW_LIGHT_DISTANCE = 30;
-const PAST_STOPLIGHT_DISTANCE = 18;
-const STOPLIGHT_DISTANCE_TOLERANCE = 10;
+/**
+ * Constants for traffic control distances
+ */
+const TRAFFIC_DISTANCES = {
+  RED_LIGHT: 17,
+  YELLOW_LIGHT: 35,
+  PAST_STOPLIGHT_DISTANCE: 18,
+  STOPLIGHT_TOLERANCE: 14,
+  MAX_DISTANCE: 110,
+  FRAME_RATE_MULTIPLIER: 60,
+  YELLOW_SPEED_MULTIPLIER: 2
+};
 
-const MAX_DISTANCE = 110;
+/**
+ * Checks if a car should stop at a stoplight based on its position and the stoplight state
+ * @param {Object} carPosition - The current position of the car
+ * @param {Object} stoplight - The stoplight object
+ * @param {number} direction - The direction of car movement (1 for right, -1 for left)
+ * @returns {Object} Object containing whether to stop and speed multiplier
+ */
+function checkStoplight(carPosition, stoplight, direction) {
+  const stoplightDistance = Math.abs(carPosition.z - stoplight.stopPoint);
+  const isRightDirection = direction === 1;
+  const isCorrectStoplight = stoplight.id === (isRightDirection ? "right-stoplight" : "left-stoplight");
+  
+  if (!isCorrectStoplight) return { shouldStop: false, speedMultiplier: 1 };
 
+  // Check if car is past the stoplight
+  if ((isRightDirection && carPosition.z > stoplight.stopPoint) || 
+      (!isRightDirection && carPosition.z < stoplight.stopPoint)) {
+    if (stoplightDistance < TRAFFIC_DISTANCES.PAST_STOPLIGHT_DISTANCE) {
+      return { shouldStop: false, speedMultiplier: 1 };
+    }
+  }
+
+  // Check stoplight conditions
+  if (stoplightDistance < TRAFFIC_DISTANCES.STOPLIGHT_TOLERANCE) {
+    return { shouldStop: false, speedMultiplier: 1 };
+  }
+
+  if (stoplightDistance < TRAFFIC_DISTANCES.RED_LIGHT && stoplight.state === "red") {
+    return { shouldStop: true, speedMultiplier: 1 };
+  }
+
+  if (stoplightDistance < TRAFFIC_DISTANCES.YELLOW_LIGHT && stoplight.state === "yellow") {
+    return { shouldStop: false, speedMultiplier: TRAFFIC_DISTANCES.YELLOW_SPEED_MULTIPLIER };
+  }
+
+  return { shouldStop: false, speedMultiplier: 1 };
+}
+
+/**
+ * Handles car movement and traffic light behavior
+ * @param {Object} state - The current state
+ * @param {number} delta - Time delta for movement calculation
+ * @param {Object} carRef - Reference to the car object
+ * @param {number} speed - Base speed of the car
+ * @param {number} direction - Direction of movement (1 for right, -1 for left)
+ * @param {number} returnPositionLeft - X position to return to when moving left
+ * @param {number} returnPositionRight - X position to return to when moving right
+ * @returns {number} The new direction of movement
+ */
 export function carBehaviour(
   state,
   delta,
@@ -16,55 +71,34 @@ export function carBehaviour(
   returnPositionLeft,
   returnPositionRight
 ) {
-  if (!carRef.current) return direction;
+  if (!carRef?.current) {
+    console.warn("Car reference is invalid");
+    return direction;
+  }
 
   const stoplightStates = useTrafficStore.getState().stoplightStates;
   const carPosition = carRef.current.position;
-  let yellowSpeed = 1;
+  let speedMultiplier = 1;
 
-  // Check if car is approaching any stoplight
-  for (const [_, stoplight] of stoplightStates) {    
-    let stoplightDistance = Math.abs(carPosition.z - stoplight.stopPoint);    
-    if (direction === 1) {
-      // If car is moving right
-      if (stoplight.id === "right-stoplight") {
-        if (carPosition.z > stoplight.stopPoint && stoplightDistance < PAST_STOPLIGHT_DISTANCE) {
-          // If car is already past the stoplight, continue          
-        } else if (stoplightDistance < STOPLIGHT_DISTANCE_TOLERANCE) {
-          // If car is too close to the stoplight, continue          
-        } else if (stoplightDistance < RED_LIGHT_DISTANCE && stoplight.state === "red") {
-          return direction;
-        } else if (stoplightDistance < YELLOW_LIGHT_DISTANCE && stoplight.state === "yellow") {
-          yellowSpeed = 2;
-        }
-      }
-    } else {      
-      // If car is moving left
-      if (stoplight.id === "left-stoplight") {
-        if (carPosition.z < stoplight.stopPoint && stoplightDistance < PAST_STOPLIGHT_DISTANCE) {
-          // If car is already past the stoplight, continue          
-        } else if (stoplightDistance < STOPLIGHT_DISTANCE_TOLERANCE) {
-          // If car is too close to the stoplight, continue          
-        } else if (stoplightDistance < RED_LIGHT_DISTANCE && stoplight.state === "red") {
-          // If stoplight is red, continue
-          return direction;
-        } else if (stoplightDistance < YELLOW_LIGHT_DISTANCE && stoplight.state === "yellow") {
-          // If stoplight is yellow, slow down
-          yellowSpeed = 2;
-        }
-      }
-    }
+  // Check all stoplights
+  for (const [_, stoplight] of stoplightStates) {
+    const { shouldStop, speedMultiplier: newMultiplier } = checkStoplight(carPosition, stoplight, direction);
+    if (shouldStop) return direction;
+    speedMultiplier = Math.max(speedMultiplier, newMultiplier);
   }
 
-  // If no stoplight is blocking, continue with normal movement
-  carRef.current.position.z += (speed * direction * delta * 60) / yellowSpeed;
+  // Calculate and apply movement
+  const movement = (speed * direction * delta * TRAFFIC_DISTANCES.FRAME_RATE_MULTIPLIER) / speedMultiplier;
+  carRef.current.position.z += movement;
 
-  // Existing boundary check logic
-  if (carRef.current.position.z >= MAX_DISTANCE) {
+  // Handle boundary conditions
+  if (carRef.current.position.z >= TRAFFIC_DISTANCES.MAX_DISTANCE) {
     carRef.current.position.x = returnPositionRight;
     carRef.current.rotation.y = Math.PI;
     return -1;
-  } else if (carRef.current.position.z <= -MAX_DISTANCE) {
+  }
+  
+  if (carRef.current.position.z <= -TRAFFIC_DISTANCES.MAX_DISTANCE) {
     carRef.current.position.x = returnPositionLeft;
     carRef.current.rotation.y = 0;
     return 1;
