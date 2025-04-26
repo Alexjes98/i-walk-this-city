@@ -1,7 +1,8 @@
 import { createRoot } from "react-dom/client";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, OrbitControls, SpotLight } from "@react-three/drei";
-import { useRef, Suspense } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ContactShadows, OrbitControls, SpotLight, PerspectiveCamera } from "@react-three/drei";
+import { useRef, Suspense, useState, useEffect } from "react";
+import * as THREE from "three";
 import EnvMap from "./EnvMap";
 import Building1 from "./components/Building1";
 import Building2 from "./components/Building2";
@@ -12,6 +13,7 @@ import BackGroundBuilding from "./components/BackGroundBuilding";
 import Avenue from "./components/Avenue";
 import MyFirstCar from "./components/MFC";
 import LoadingScreen from "./components/LoadingScreen";
+import ControlPanel from "./components/ControlPanel";
 import "./styles.css";
 
 // Light guide component for point lights
@@ -50,7 +52,66 @@ function LightGuide({ position, color, size = 0.5 }) {
     </group>
   );
 }
-function CityScene() {
+
+// Camera controller component for building navigation
+function CameraController({ target, isMoving, setIsMoving }) {
+  const { camera } = useThree();
+  const initialPos = useRef(new THREE.Vector3(0, 8, 25));
+  const targetPos = useRef(new THREE.Vector3());
+  const lookAtTarget = useRef(new THREE.Vector3());
+  const animationProgress = useRef(0);
+  
+  useEffect(() => {
+    if (target) {
+      console.log("target", target);
+      // Store the current camera position
+      initialPos.current.copy(camera.position);
+      
+      // Set target position - offset from building position for better view
+      targetPos.current.set(
+        target.position[0] + target.offset[0], // Offset X to view building from an angle
+        target.position[1] + target.offset[1], // Higher Y for better overview
+        target.position[2] + target.offset[2]  // Offset Z for distance
+      );     
+      
+      // Set look at position - the building itself
+      lookAtTarget.current.set(target.position[0], target.position[1], target.position[2]);      
+      
+      // Reset animation progress
+      animationProgress.current = 0;
+      setIsMoving(true);
+    }
+  }, [target, camera]);
+  
+  useFrame((_, delta) => {
+    if (isMoving) {
+      // Increment animation progress
+      animationProgress.current += delta * 0.5; // Adjust speed by changing multiplier
+      
+      if (animationProgress.current >= 1) {
+        // Animation complete
+        animationProgress.current = 1;
+        setIsMoving(false);
+      }
+      
+      // Calculate interpolated position
+      const t = easeOutCubic(animationProgress.current);
+      camera.position.lerpVectors(initialPos.current, targetPos.current, t);
+      
+      // Have camera look at the building during animation
+      camera.lookAt(lookAtTarget.current);
+    }
+  });
+  
+  return null;
+}
+
+// Easing function for smoother camera movement
+function easeOutCubic(x) {
+  return 1 - Math.pow(1 - x, 3);
+}
+
+function CityScene({ orbitControlsEnabled, target, isMoving, setIsMoving }) {
   const spotLightRef = useRef();
   const movingLightRef = useRef();
 
@@ -118,22 +179,78 @@ function CityScene() {
       <EnvMap />
       {/* Add fog for atmosphere */}
       <fog attach="fog" args={["#120023", 30, 90]} />
+      
+      {/* Camera controller for building navigation */}
+      <CameraController 
+        target={target} 
+        isMoving={isMoving} 
+        setIsMoving={setIsMoving}
+      />
+      
+      {/* OrbitControls that can be toggled */}
+      {orbitControlsEnabled && (
+        <OrbitControls
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
+          minDistance={2}
+          maxDistance={50}
+        />
+      )}
+      
+      {/* Main camera */}
+      <PerspectiveCamera
+        makeDefault
+        position={[0, 8, 25]}
+        fov={45}        
+      />
     </>
   );
 }
 
 function App() {
+  const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
+  const [targetBuilding, setTargetBuilding] = useState(null);
+  const [cameraIsMoving, setCameraIsMoving] = useState(false);
+  
+  // Building positions for camera navigation
+  const buildingPositions = {
+    "Building 1": {position: [-10, 0, 0], offset: [25, -8, 25]},
+    "Building 2": {position: [10, 0, 30], offset: [5, 0, 3]},
+    "Building 3": {position: [5, 0, 65], offset: [-5, 0, 5]},
+    "Building 4": {position: [5, 5, -10], offset: [-5, 3, 0]},
+    "Building 5": {position: [10, 5, 30], offset: [-15, 0, 15]},    
+    "Main Avenue": {position: [0, -8, 20], offset: [0, 0, 2]},
+    "StopLight": {position: [15, 0, -52], offset: [8, 2, 0]},    
+    "Overview": {position: [0, 10, 60], offset: [0, 0, 0]}
+  };
+  
+  const handleToggleOrbitControls = () => {
+    setOrbitControlsEnabled(!orbitControlsEnabled);
+  };
+  
+  const handleMoveToBuilding = (buildingName, position, offset) => {
+    if (!cameraIsMoving) {
+      setTargetBuilding({name: buildingName, position: position, offset: offset});
+    }
+  };
+
   return (
     <div id="canvas-container">
-      <Canvas camera={{ position: [0, 8, 25], fov: 45 }} shadows>
+      <ControlPanel 
+        onToggleOrbitControls={handleToggleOrbitControls}
+        orbitControlsEnabled={orbitControlsEnabled}
+        onMoveToBuilding={handleMoveToBuilding}
+        buildingPositions={buildingPositions}
+      />
+      
+      <Canvas shadows>
         <Suspense fallback={<LoadingScreen />}>
-          <CityScene />
-          <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-            minDistance={2}
-            maxDistance={50}
+          <CityScene 
+            orbitControlsEnabled={orbitControlsEnabled}
+            target={targetBuilding}
+            isMoving={cameraIsMoving}
+            setIsMoving={setCameraIsMoving}
           />
         </Suspense>
       </Canvas>

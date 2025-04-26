@@ -55,21 +55,34 @@ const STOPLIGHT_CONFIG = {
 };
 
 function StopLight({ id, position = [0, 0, 0], rotation = [0, 0, 0] }) {
-  
   const lightRef = useRef();
   const [activeLight, setActiveLight] = useState("red");
   const [timeElapsed, setTimeElapsed] = useState(0);
-  
   const [poleDecoratorColor, setPoleDecoratorColor] = useState(STOPLIGHT_CONFIG.poleDecorator.color);
 
   const registerStoplight = useTrafficStore(state => state.registerStoplight);
   const updateStoplightState = useTrafficStore(state => state.updateStoplightState);
+  const manualOverrides = useTrafficStore(state => state.manualOverrides);
 
   useEffect(() => {    
     registerStoplight(id, position, rotation);
-  }, []);
+  }, [id, position, rotation, registerStoplight]);
+  
+  // Effect to handle manual override
+  useEffect(() => {
+    const override = manualOverrides.get(id);
+    if (override) {
+      setActiveLight("red");
+      setPoleDecoratorColor(STOPLIGHT_CONFIG.lights.red.color);
+    }
+  }, [manualOverrides, id]);
 
   useFrame((state, delta) => {
+    // If this stoplight is manually overridden, don't update its state
+    if (manualOverrides.has(id)) {
+      return;
+    }
+    
     setTimeElapsed((prev) => prev + delta);
 
     // Check if it's time to change the light
