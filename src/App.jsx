@@ -226,7 +226,18 @@ function App() {
   };
   
   const handleToggleOrbitControls = () => {
-    setOrbitControlsEnabled(!orbitControlsEnabled);
+    const newState = !orbitControlsEnabled;
+    setOrbitControlsEnabled(newState);
+    
+    // If disabling orbit controls, reset to overview position
+    if (!newState) {
+      setTargetBuilding({
+        name: "Overview", 
+        position: buildingPositions["Overview"].position, 
+        offset: buildingPositions["Overview"].offset
+      });
+      setCameraIsMoving(true);
+    }
   };
   
   const handleMoveToBuilding = (buildingName, position, offset) => {

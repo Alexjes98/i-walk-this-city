@@ -24,7 +24,16 @@ const ControlPanel = ({
     }
   };
 
-  if (orbitControlsEnabled) return null;
+  // If orbit controls are enabled, only show the return button
+  if (orbitControlsEnabled) {
+    return (
+      <div className="orbit-return-button">
+        <button onClick={onToggleOrbitControls} className="return-btn">
+          Return to Controlled Camera
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="control-panel">
