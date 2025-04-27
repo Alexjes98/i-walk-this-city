@@ -9,6 +9,7 @@ import Building2 from "./components/Building2";
 import Building3 from "./components/Building3";
 import Building4 from "./components/Building4";
 import Building5 from "./components/Building5";
+import BuildingBackground from "./components/BuildingBackground";
 import BackGroundBuilding from "./components/BackGroundBuilding";
 import Avenue from "./components/Avenue";
 import MyFirstCar from "./components/MFC";
@@ -163,6 +164,9 @@ function CityScene({ orbitControlsEnabled, target, isMoving, setIsMoving, onBuil
       <LightGuide position={[-5, 17, 0]} color="white" size={0.5} />
       <LightGuide position={[0, 1, 0]} color="white" />
 
+      <BuildingBackground windowColor="#ff00ff" windows={5} dimensions={[20, 100, 20]} position={[-25, 0, -27]} rotation={[0, Math.PI / 2, 0]} />
+      <BuildingBackground windowColor="#003b99" windows={5} dimensions={[20, 100, 20]} position={[-25, 0, -70]} rotation={[0, 0, 0]} />
+      <BuildingBackground windowColor="#ff00ff" windows={3} dimensions={[20, 50, 20]} position={[30, 0, -73]} rotation={[0, 0, 0]} />
       {/* Spotlights for dramatic lighting */}
       <SpotLight
         position={[15, 20, 0]}
