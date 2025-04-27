@@ -13,7 +13,7 @@ export default function BuildingBackground({
     <group position={position} rotation={rotation}>
       <mesh>
         <boxGeometry args={[dimensions[0], dimensions[1], dimensions[2]]} />
-        <meshStandardMaterial color="gray" />
+        <meshStandardMaterial color="#3d3d3d" />
       </mesh>
       {Array.from({ length: windows }, (_, i) => (
         <mesh key={i} position={[0, 0 + i * 10, 0]}>

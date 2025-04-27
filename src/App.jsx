@@ -166,7 +166,7 @@ function CityScene({ orbitControlsEnabled, target, isMoving, setIsMoving, onBuil
 
       <BuildingBackground windowColor="#ff00ff" windows={5} dimensions={[20, 100, 20]} position={[-25, 0, -27]} rotation={[0, Math.PI / 2, 0]} />
       <BuildingBackground windowColor="#003b99" windows={5} dimensions={[20, 100, 20]} position={[-25, 0, -70]} rotation={[0, 0, 0]} />
-      <BuildingBackground windowColor="#ff00ff" windows={3} dimensions={[20, 50, 20]} position={[30, 0, -73]} rotation={[0, 0, 0]} />
+      <BuildingBackground windowColor="#ed004b" windows={3} dimensions={[20, 50, 20]} position={[30, 0, -73]} rotation={[0, 0, 0]} />
       {/* Spotlights for dramatic lighting */}
       <SpotLight
         position={[15, 20, 0]}
