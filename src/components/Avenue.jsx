@@ -7,7 +7,7 @@ import Street from "./Street";
 import Sidewalk from "./Sidewalk";
 import StreetSeparator from "./StreetSeparator";
 import { pedestrianBehaviour } from "../utils/pedestrianMovement";
-import { carBehaviour } from "../utils/carMovement";
+import { carBehaviour, crossCarBehaviour } from "../utils/carMovement";
 // Entity configurations
 const CAR_CONFIGS = [
   {
@@ -30,6 +30,25 @@ const CAR_CONFIGS = [
     rotation: [0, 0, 0],
     accessories: [<PoliceSirens />],
   },
+];
+
+const CROSS_CAR_CONFIGS = [
+  {
+    position: [0, 0.5, -50],
+    rotation: [0, Math.PI/2, 0],
+    accessories: [],
+  },
+  {
+    position: [0, 0.5, -51],
+    rotation: [0, Math.PI/2, 0],
+    accessories: [],
+  },
+  {
+    position: [0, 0.5, -55],
+    rotation: [0, Math.PI/2, 0],
+    accessories: [],
+  },
+
 ];
 
 const PEDESTRIAN_CONFIGS = [
@@ -123,6 +142,15 @@ function Avenue({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
           rotation={config.rotation}
           accessories={config.accessories}
           behaviour={carBehaviour}
+        />
+      ))}
+
+      {CROSS_CAR_CONFIGS.map((config, index) => (
+        <Car
+          key={index}
+          position={config.position}
+          rotation={config.rotation}          
+          behaviour={crossCarBehaviour}
         />
       ))}
 
