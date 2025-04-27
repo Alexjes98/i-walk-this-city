@@ -14,6 +14,14 @@ import Avenue from "./components/Avenue";
 import MyFirstCar from "./components/MFC";
 import LoadingScreen from "./components/LoadingScreen";
 import ControlPanel from "./components/ControlPanel";
+// Import all sound files
+import eyeOfUniverse from "./assets/sounds/eyeofuniverse.mp3";
+import favoriteLover from "./assets/sounds/favoritelover.mp3";
+import myNewFriend from "./assets/sounds/mynewfriend.mp3";
+import miamiDisco from "./assets/sounds/miamidisco.mp3";
+import driftRider from "./assets/sounds/driftrider.mp3";
+import blueMonday from "./assets/sounds/bluemonday.mp3";
+import venger from "./assets/sounds/venger.mp3";
 import "./styles.css";
 
 // Light guide component for point lights
@@ -54,7 +62,7 @@ function LightGuide({ position, color, size = 0.5 }) {
 }
 
 // Camera controller component for building navigation
-function CameraController({ target, isMoving, setIsMoving }) {
+function CameraController({ target, isMoving, setIsMoving, onBuildingReached }) {
   const { camera } = useThree();
   const initialPos = useRef(new THREE.Vector3(0, 8, 25));
   const targetPos = useRef(new THREE.Vector3());
@@ -92,6 +100,11 @@ function CameraController({ target, isMoving, setIsMoving }) {
         // Animation complete
         animationProgress.current = 1;
         setIsMoving(false);
+        
+        // Call the callback when building is reached
+        if (onBuildingReached && target) {
+          onBuildingReached(target.name);
+        }
       }
       
       // Calculate interpolated position
@@ -111,7 +124,7 @@ function easeOutCubic(x) {
   return 1 - Math.pow(1 - x, 3);
 }
 
-function CityScene({ orbitControlsEnabled, target, isMoving, setIsMoving }) {
+function CityScene({ orbitControlsEnabled, target, isMoving, setIsMoving, onBuildingReached }) {
   const spotLightRef = useRef();
   const movingLightRef = useRef();
 
@@ -185,6 +198,7 @@ function CityScene({ orbitControlsEnabled, target, isMoving, setIsMoving }) {
         target={target} 
         isMoving={isMoving} 
         setIsMoving={setIsMoving}
+        onBuildingReached={onBuildingReached}
       />
       
       {/* OrbitControls that can be toggled */}
@@ -212,17 +226,116 @@ function App() {
   const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
   const [targetBuilding, setTargetBuilding] = useState(null);
   const [cameraIsMoving, setCameraIsMoving] = useState(false);
+  const [audioElement, setAudioElement] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(null);
+  const [volume, setVolume] = useState(0.5);
+  
+  // Define available tracks
+  const availableTracks = [
+    { id: 'eyeOfUniverse', name: 'Eye of Universe', src: eyeOfUniverse },
+    { id: 'favoriteLover', name: 'Favorite Lover', src: favoriteLover },
+    { id: 'myNewFriend', name: 'My New Friend', src: myNewFriend },
+    { id: 'miamiDisco', name: 'Miami Disco', src: miamiDisco },
+    { id: 'driftRider', name: 'Drift Rider', src: driftRider },
+    { id: 'blueMonday', name: 'Blue Monday', src: blueMonday },
+    { id: 'venger', name: 'Venger', src: venger }
+  ];
   
   // Building positions for camera navigation
   const buildingPositions = {
     "Building 1": {position: [-10, 0, 0], offset: [25, -8, 25]},
     "Building 2": {position: [10, 0, 30], offset: [5, 0, 3]},
-    "Building 3": {position: [5, 0, 65], offset: [-5, 0, 5]},
-    "Building 4": {position: [5, 5, -10], offset: [-5, 3, 0]},
+    "Building 3": {position: [7, 0, 65], offset: [-2, 0, 5]},
+    "Building 4": {position: [5, 5, -10], offset: [-9, 3, 0]},
     "Building 5": {position: [10, 5, 30], offset: [-15, 0, 15]},    
     "Main Avenue": {position: [0, -8, 20], offset: [0, 0, 2]},
     "StopLight": {position: [15, 0, -52], offset: [8, 2, 0]},    
     "Overview": {position: [0, 10, 60], offset: [0, 0, 0]}
+  };
+  
+  // Handle track changes
+  useEffect(() => {
+    if (currentTrack) {
+      // Clean up previous audio if exists
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.src = '';
+      }
+      
+      // Create new audio element with selected track
+      const audio = new Audio(currentTrack.src);
+      audio.loop = true;
+      audio.volume = volume;
+      setAudioElement(audio);
+      
+      // Play if already playing state
+      if (isPlaying) {
+        audio.play();
+      }
+    }
+    
+    // Cleanup function
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.src = '';
+      }
+    };
+  }, [currentTrack]);
+  
+  // Handle volume changes
+  useEffect(() => {
+    if (audioElement) {
+      audioElement.volume = volume;
+    }
+  }, [volume, audioElement]);
+  
+  // Handle when building is reached
+  const handleBuildingReached = (buildingName) => {
+    if (buildingName === "Building 3") {
+      // Auto-select first track if none selected
+      if (!currentTrack && availableTracks.length > 0) {
+        setCurrentTrack(availableTracks[0]);
+      }
+      setIsPlaying(true);
+      if (audioElement) {
+        audioElement.play();
+      }
+    } else if (isPlaying) {
+      setIsPlaying(false);
+      if (audioElement) {
+        audioElement.pause();
+      }
+    }
+  };
+  
+  // Handle play/pause toggle
+  const handlePlayPauseToggle = () => {
+    if (!currentTrack && availableTracks.length > 0) {
+      setCurrentTrack(availableTracks[0]);
+    }
+    
+    const newPlayingState = !isPlaying;
+    setIsPlaying(newPlayingState);
+    
+    if (audioElement) {
+      if (newPlayingState) {
+        audioElement.play();
+      } else {
+        audioElement.pause();
+      }
+    }
+  };
+  
+  // Handle track selection
+  const handleTrackSelect = (track) => {
+    setCurrentTrack(track);
+  };
+  
+  // Handle volume change
+  const handleVolumeChange = (newVolume) => {
+    setVolume(newVolume);
   };
   
   const handleToggleOrbitControls = () => {
@@ -253,6 +366,15 @@ function App() {
         orbitControlsEnabled={orbitControlsEnabled}
         onMoveToBuilding={handleMoveToBuilding}
         buildingPositions={buildingPositions}
+        // Audio controls
+        availableTracks={availableTracks}
+        currentTrack={currentTrack}
+        isPlaying={isPlaying}
+        volume={volume}
+        onPlayPauseToggle={handlePlayPauseToggle}
+        onTrackSelect={handleTrackSelect}
+        onVolumeChange={handleVolumeChange}
+        showAudioControls={targetBuilding?.name === "Building 3"}
       />
       
       <Canvas shadows>
@@ -262,6 +384,7 @@ function App() {
             target={targetBuilding}
             isMoving={cameraIsMoving}
             setIsMoving={setCameraIsMoving}
+            onBuildingReached={handleBuildingReached}
           />
         </Suspense>
       </Canvas>

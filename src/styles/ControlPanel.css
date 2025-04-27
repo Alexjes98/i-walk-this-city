@@ -50,6 +50,14 @@
   font-weight: 500;
 }
 
+.section h4 {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .control-btn, .building-btn, .stoplight-btn {
   background-color: #444;
   color: white;
@@ -98,4 +106,80 @@
   margin-bottom: 8px;
   font-size: 14px;
   opacity: 0.8;
+}
+
+/* Audio Controls */
+.audio-controls {
+  background-color: rgba(128, 0, 128, 0.2);
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+.audio-controls h3 {
+  color: #ff80ff;
+}
+
+.playback-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.volume-control label {
+  width: 60px;
+}
+
+.volume-control input[type="range"] {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #666;
+  outline: none;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ff80ff;
+  cursor: pointer;
+}
+
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.track-btn {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-align: left;
+  font-size: 13px;
+}
+
+.track-btn:hover {
+  background-color: #555;
+}
+
+.track-btn.active {
+  background-color: #800080;
+  color: white;
+  border-left: 3px solid #ff80ff;
 } 

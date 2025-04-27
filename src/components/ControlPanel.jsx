@@ -6,7 +6,16 @@ const ControlPanel = ({
   onToggleOrbitControls, 
   orbitControlsEnabled,
   onMoveToBuilding,
-  buildingPositions
+  buildingPositions,
+  // Audio controls
+  availableTracks,
+  currentTrack,
+  isPlaying,
+  volume,
+  onPlayPauseToggle,
+  onTrackSelect,
+  onVolumeChange,
+  showAudioControls
 }) => {
   const [isStoplightManualMode, setIsStoplightManualMode] = useState(false);
   const [delayTime, setDelayTime] = useState(5);
@@ -53,6 +62,46 @@ const ControlPanel = ({
           </button>
         ))}
       </div>
+      
+      {/* Audio player controls - only shown when Building 3 is in view */}
+      {showAudioControls && (
+        <div className="section audio-controls">
+          <h3>Building 3 Club Music</h3>
+          <div className="playback-controls">
+            <button
+              className={`control-btn ${isPlaying ? 'active' : ''}`}
+              onClick={onPlayPauseToggle}
+            >
+              {isPlaying ? '⏸ Pause' : '▶ Play'}
+            </button>
+            
+            <div className="volume-control">
+              <label>Volume:</label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+              />
+            </div>
+          </div>
+          
+          <div className="track-list">
+            <h4>Select Track:</h4>
+            {availableTracks.map(track => (
+              <button
+                key={track.id}
+                className={`track-btn ${currentTrack && currentTrack.id === track.id ? 'active' : ''}`}
+                onClick={() => onTrackSelect(track)}
+              >
+                {track.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="section">
         <h3>Stoplight Control</h3>
