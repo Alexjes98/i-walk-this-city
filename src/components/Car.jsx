@@ -20,8 +20,8 @@ function Car({
   if (latestDirection !== direction) {
     setLatestDirection(direction);
     setSpeed(0.3 + (Math.random() * 0.5));
-    setReturnPositionLeft(-3 + (Math.random() * 8)); // Random number between -3 and 5
-    setReturnPositionRight(10 + (Math.random() * 8)); // Random number between 10 and 18
+    setReturnPositionLeft(Math.floor(-3 + (Math.random() * 8))); // Random number between -3 and 5
+    setReturnPositionRight(Math.floor(10 + (Math.random() * 8))); // Random number between 10 and 18
   }
   // Load the GLB model with suspense
   const { scene } = useGLTF("/src/assets/objects/carritochatgptsoso.glb", true);

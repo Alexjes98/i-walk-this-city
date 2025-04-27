@@ -127,7 +127,7 @@ export function carBehaviour(
 function checkCrossCar(carPosition, stoplight, direction) {
   const stoplightDistance = Math.abs(carPosition.x - 20); 
   if (
-    stoplightDistance < 4 &&
+    stoplightDistance < 5 &&
     (stoplight.state === "green" || stoplight.state === "yellow")
   ) {
     return { shouldStop: true, speedMultiplier: 1 };
@@ -168,7 +168,7 @@ export function crossCarBehaviour(state, delta, carRef, speed, direction) {
 
   if (carRef.current.position.x <= -CROSS_CAR_DISTANCES.MAX_DISTANCE) {
     carRef.current.position.x = 50;
-    carRef.current.position.z = -55 + (Math.random() * 10);
+    carRef.current.position.z = Math.floor(-55 + (Math.random() * 10));
     return -1;
   }
 

@@ -254,7 +254,7 @@ function App() {
     "Building 4": {position: [5, 5, -10], offset: [-9, 3, 0]},
     "Building 5": {position: [10, 5, 30], offset: [-15, 0, 15]},    
     "Main Avenue": {position: [0, -8, 20], offset: [0, 0, 2]},
-    "StopLight": {position: [15, 0, -52], offset: [8, 2, 0]},    
+    "StopLight": {position: [25, -5, -52], offset: [11, 2, -2]},    
     "Overview": {position: [0, 10, 60], offset: [0, 0, 0]}
   };
   

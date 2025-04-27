@@ -56,11 +56,17 @@ const PEDESTRIAN_CONFIGS = [
   { position: [-6, 0.95, -30], direction: 1 },
   { position: [-6, 0.95, 10], direction: -1 },
   { position: [-6, 0.95, 40], direction: 1 },
+  { position: [-6, 0.95, 60], direction: -1 },
+  { position: [-6, 0.95, 80], direction: 1 },
+  { position: [-6, 0.95, -50], direction: -1 },
   
   // Right sidewalk pedestrians
   { position: [21, 0.95, -20], direction: 1 },
   { position: [21, 0.95, 20], direction: -1 },
   { position: [21, 0.95, 50], direction: 1 },
+  { position: [21, 0.95, 70], direction: -1 },
+  { position: [21, 0.95, 90], direction: 1 },
+  { position: [21, 0.95, -50], direction: 1 },
   
   // Crosswalk pedestrians
   { position: [-40, 0.95, -50], direction: 1 },
