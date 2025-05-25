@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import * as THREE from 'three';
 
 function MyFirstCar({position = [0, 0, 0], rotation = [0, 0, 0]}) {
-    const obj = useLoader(OBJLoader, "/src/assets/objects/carrito-estilo-ghibli.obj");
+    const obj = useLoader(OBJLoader, "/assets/objects/carrito-estilo-ghibli.obj");
     const texture = useLoader(TextureLoader, "/src/assets/textures/textura_base.png");
     
     const material = useMemo(() => {
