@@ -14,8 +14,16 @@ export default defineConfig({
     assetsInlineLimit: 4096, // 4kb - files smaller than this will be inlined as base64
     rollupOptions: {
       output: {
-        assetFileNames: 'assets/[name].[hash][extname]',
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.')
+          const ext = info[info.length - 1]
+          if (/\.(obj|mtl|glb|gltf)$/.test(assetInfo.name)) {
+            return `assets/3d/[name][extname]`
+          }
+          return `assets/[name].[hash][extname]`
+        },
       }
     }
-  }
+  },
+  publicDir: 'public'
 })
