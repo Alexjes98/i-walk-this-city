@@ -24,7 +24,7 @@ function Car({
     setReturnPositionRight(Math.floor(10 + (Math.random() * 8))); // Random number between 10 and 18
   }
   // Load the GLB model with suspense
-  const { scene } = useGLTF("/src/assets/objects/carritochatgptsoso.glb", true);
+  const { scene } = useGLTF("/assets/objects/carritochatgptsoso.glb", true);
 
   // Clone the scene and apply modifications once per instance
   const clonedScene = useMemo(() => {
@@ -89,6 +89,6 @@ function Car({
 }
 
 // Preload the model
-useGLTF.preload("/src/assets/objects/carritochatgptsoso.glb");
+useGLTF.preload("/assets/objects/carritochatgptsoso.glb");
 
 export default Car;
