@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 function MyFirstCar({position = [0, 0, 0], rotation = [0, 0, 0]}) {
     const obj = useLoader(OBJLoader, "/assets/objects/carrito-estilo-ghibli.obj");
-    const texture = useLoader(TextureLoader, "/assets/textures/textura_base.png");
+    const texture = useLoader(TextureLoader, "/textures/textura_base.png");
     
     const material = useMemo(() => {
         return new THREE.MeshStandardMaterial({
