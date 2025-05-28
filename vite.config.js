@@ -20,6 +20,9 @@ export default defineConfig({
           if (/\.(obj|mtl|glb|gltf)$/.test(assetInfo.name)) {
             return `assets/3d/[name][extname]`
           }
+          if (/\.(png|jpg|jpeg|gif|webp)$/.test(assetInfo.name)) {
+            return `assets/textures/[name][extname]`
+          }
           return `assets/[name].[hash][extname]`
         },
       }
